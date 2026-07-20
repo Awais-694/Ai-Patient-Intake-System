@@ -22,7 +22,7 @@ function getDashboardPath(role) {
   return "/patient/dashboard";
 }
 
-export default async function RegisterPage() {
+export default async function RegisterPage({ searchParams }) {
   const session = await auth();
 
   // Redirect authenticated users to the dashboard for their role.
@@ -30,5 +30,10 @@ export default async function RegisterPage() {
     redirect(getDashboardPath(session.user.role));
   }
 
-  return <RegisterForm />;
+  const params = await searchParams;
+  const defaultRole = params?.role === USER_ROLES.DOCTOR
+    ? USER_ROLES.DOCTOR
+    : USER_ROLES.PATIENT;
+
+  return <RegisterForm defaultRole={defaultRole} />;
 }

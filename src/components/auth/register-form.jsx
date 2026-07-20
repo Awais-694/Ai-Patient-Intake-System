@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { registrationSchema } from "@/validations/auth.validation";
 import { USER_ROLES } from "@/lib/constants";
 
-export default function RegisterForm() {
+export default function RegisterForm({ defaultRole = USER_ROLES.PATIENT }) {
   const router = useRouter();
 
   const [showPassword, setShowPassword] =
@@ -44,7 +44,7 @@ export default function RegisterForm() {
       phone: "",
       password: "",
       confirmPassword: "",
-      role: USER_ROLES.PATIENT,
+      role: defaultRole,
     },
   });
 

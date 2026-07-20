@@ -91,7 +91,7 @@ export default async function HomePage() {
         <div className="page-container space-y-20">
           <Story image={images.doctor} imageAlt="A doctor checking a patient's blood pressure" eyebrow="For patients" title="Arrive prepared for your consultation" text="Maintain your medical profile, book available time slots, and give your doctor the health context needed for a focused consultation." points={["Approved doctor profiles", "Real-time appointment workflow", "Clinical outcomes in one place"]} href="/register" linkLabel="Create Patient Account" showAction={!session?.user} />
 
-          <Story image={images.patient} imageAlt="A doctor examining a patient's throat" eyebrow="For doctors" title="Review structured information before the visit" text="See the original patient intake alongside an AI-assisted clinical summary, then record the final diagnosis, prescription, and follow-up plan." points={["Structured clinical intake", "Human review remains essential", "Secure patient appointment history"]} href="/register" linkLabel="Join as a Doctor" showAction={!session?.user} reverse />
+          <Story image={images.patient} imageAlt="A doctor examining a patient's throat" eyebrow="For doctors" title="Review structured information before the visit" text="See the original patient intake alongside an AI-assisted clinical summary, then record the final diagnosis, prescription, and follow-up plan." points={["Structured clinical intake", "Human review remains essential", "Secure patient appointment history"]} href="/register?role=doctor" linkLabel="Join as a Doctor" showAction={!session?.user} reverse />
         </div>
       </section>
 
