@@ -47,7 +47,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
 
     await signOut({
-      callbackUrl: "/login",
+      callbackUrl: "/",
     });
   }
 

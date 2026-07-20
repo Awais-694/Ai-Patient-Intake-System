@@ -7,7 +7,7 @@ import { LoaderCircle, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LogoutButton({
-  callbackUrl = "/login",
+  callbackUrl = "/",
   label = "Logout",
   showIcon = true,
   variant = "default",
