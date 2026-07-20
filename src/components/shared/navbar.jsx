@@ -57,7 +57,7 @@ export default function Navbar() {
 
   const dashboardPath = getDashboardPath(user?.role);
   const visibleNavigation = isAuthenticated
-    ? publicNavigation.filter((item) => item.href === "/")
+    ? []
     : publicNavigation;
 
   function isActiveLink(href) {
