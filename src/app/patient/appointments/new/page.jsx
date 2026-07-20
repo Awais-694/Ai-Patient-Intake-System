@@ -219,11 +219,16 @@ export default async function NewAppointmentPage({
             <p className="mt-2 text-sm text-primary">Suggested specialty: <strong>{bookingData.recommendation.specializations.join(", ") || bookingData.recommendation.suggestedDepartment}</strong></p>
             {(() => {
               const exactMatches = bookingData.doctors.filter((doctor) => doctor.recommended);
-              const doctorsToShow = exactMatches.length > 0 ? exactMatches : bookingData.doctors.slice(0, 3);
+              const alternativeMatches = bookingData.doctors.filter((doctor) => doctor.alternativeRecommended);
+              const doctorsToShow = exactMatches.length > 0 ? exactMatches : alternativeMatches;
               return doctorsToShow.length > 0 ? (
               <div className="mt-4 rounded-lg border bg-muted/30 p-3">
-                <p className="text-sm font-semibold">{exactMatches.length > 0 ? "Recommended doctors" : "Available doctors to review"}</p>
-                {exactMatches.length === 0 && <p className="mt-1 text-xs text-muted-foreground">No doctor with the exact suggested specialty is currently available. These approved doctors are available for you to review.</p>}
+                <p className="text-sm font-semibold">{exactMatches.length > 0 ? "Best-match doctors" : "Closest available alternative"}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {exactMatches.length > 0
+                    ? `These ${exactMatches[0].specialization} doctors best match the specialty suggested for your symptoms.`
+                    : `No doctor from the exact suggested specialty is currently available. A ${alternativeMatches[0].specialization} is the closest suitable option available on MediAssist.`}
+                </p>
                 <div className="mt-2 space-y-2">
                   {doctorsToShow
                     .slice(0, 3)
@@ -235,7 +240,7 @@ export default async function NewAppointmentPage({
                     ))}
                 </div>
               </div>
-              ) : null;
+              ) : <p className="mt-4 rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">No suitable approved doctor is currently available. Please seek direct medical care, especially if your symptoms are severe or worsening.</p>;
             })()}
             {bookingData.recommendation.requiresUrgentReview && <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm font-semibold text-destructive">Urgent medical review is recommended. Seek immediate care if symptoms are severe or worsening.</p>}
           </div>
@@ -784,18 +789,37 @@ async function getBookingPageData({
     recommendation?.recommendedSpecializations || []
   );
 
-  const normalizedDoctors = doctorDocuments
+  const availableDoctors = doctorDocuments
     .filter(
       (doctor) =>
         doctor.userId &&
         doctor.userId.isActive !== false
     )
-    .map(normalizeDoctor)
+    .map(normalizeDoctor);
+
+  const hasExactMatch = availableDoctors.some((doctor) =>
+    recommendedSpecializations.has(doctor.specialization)
+  );
+  const alternativeSpecializations = new Set(
+    hasExactMatch
+      ? []
+      : findClosestAvailableSpecializations(
+          [...recommendedSpecializations],
+          availableDoctors.map((doctor) => doctor.specialization)
+        )
+  );
+
+  const normalizedDoctors = availableDoctors
     .map((doctor) => ({
       ...doctor,
       recommended: recommendedSpecializations.has(doctor.specialization),
+      alternativeRecommended: alternativeSpecializations.has(doctor.specialization),
     }))
-    .sort((first, second) => Number(second.recommended) - Number(first.recommended));
+    .sort(
+      (first, second) =>
+        Number(second.recommended) - Number(first.recommended) ||
+        Number(second.alternativeRecommended) - Number(first.alternativeRecommended)
+    );
 
   const normalizedSearch = search.toLowerCase();
 
@@ -1423,7 +1447,7 @@ function DoctorCard({
           : "hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
       }`}
     >
-      <div className={`h-1.5 w-full ${recommended ? "bg-emerald-500" : selected ? "bg-primary" : "bg-primary/20"}`} />
+      <div className={`h-1.5 w-full ${recommended ? "bg-emerald-500" : doctor.alternativeRecommended ? "bg-amber-500" : selected ? "bg-primary" : "bg-primary/20"}`} />
 
       <div className="flex flex-1 flex-col p-5">
       <div className="flex items-start gap-4">
@@ -1438,7 +1462,12 @@ function DoctorCard({
           <div className="mb-2 flex flex-wrap items-center gap-2">
             {recommended && (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-                <Sparkles className="size-3" aria-hidden="true" /> AI Recommended
+                <Sparkles className="size-3" aria-hidden="true" /> AI Best Match
+              </span>
+            )}
+            {doctor.alternativeRecommended && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+                <Sparkles className="size-3" aria-hidden="true" /> Closest Alternative
               </span>
             )}
             {selected && (
@@ -2084,6 +2113,31 @@ function matchSpecializations(department, summary) {
     .map(([specialization]) => specialization)
     .filter((specialization) => SPECIALIZATIONS.includes(specialization));
   return matches.length ? [...new Set(matches)] : ["General Physician"];
+}
+
+function findClosestAvailableSpecializations(recommended, available) {
+  const availableSet = new Set(available);
+  const alternatives = {
+    "ENT Specialist": ["General Physician", "Pediatrician"],
+    Cardiologist: ["General Physician"],
+    Dermatologist: ["General Physician"],
+    Neurologist: ["General Physician", "Psychiatrist"],
+    Pediatrician: ["General Physician"],
+    Gynecologist: ["General Physician"],
+    "Orthopedic Surgeon": ["General Physician", "Neurologist"],
+    Psychiatrist: ["General Physician", "Neurologist"],
+    Dentist: ["ENT Specialist", "General Physician"],
+    "General Physician": [],
+  };
+
+  for (const specialization of recommended) {
+    const closest = (alternatives[specialization] || []).find((item) =>
+      availableSet.has(item)
+    );
+    if (closest) return [closest];
+  }
+
+  return availableSet.has("General Physician") ? ["General Physician"] : [];
 }
 
 function getSafeAIErrorMessage(error) {
