@@ -89,9 +89,9 @@ export default async function HomePage() {
 
       <section className="border-y bg-muted/25 py-20">
         <div className="page-container space-y-20">
-          <Story image={images.doctor} imageAlt="A doctor checking a patient's blood pressure" eyebrow="For patients" title="Arrive prepared for your consultation" text="Maintain your medical profile, book available time slots, and give your doctor the health context needed for a focused consultation." points={["Approved doctor profiles", "Real-time appointment workflow", "Clinical outcomes in one place"]} href="/register" linkLabel="Create Patient Account" />
+          <Story image={images.doctor} imageAlt="A doctor checking a patient's blood pressure" eyebrow="For patients" title="Arrive prepared for your consultation" text="Maintain your medical profile, book available time slots, and give your doctor the health context needed for a focused consultation." points={["Approved doctor profiles", "Real-time appointment workflow", "Clinical outcomes in one place"]} href="/register" linkLabel="Create Patient Account" showAction={!session?.user} />
 
-          <Story image={images.patient} imageAlt="A doctor examining a patient's throat" eyebrow="For doctors" title="Review structured information before the visit" text="See the original patient intake alongside an AI-assisted clinical summary, then record the final diagnosis, prescription, and follow-up plan." points={["Structured clinical intake", "Human review remains essential", "Secure patient appointment history"]} href="/register" linkLabel="Join as a Doctor" reverse />
+          <Story image={images.patient} imageAlt="A doctor examining a patient's throat" eyebrow="For doctors" title="Review structured information before the visit" text="See the original patient intake alongside an AI-assisted clinical summary, then record the final diagnosis, prescription, and follow-up plan." points={["Structured clinical intake", "Human review remains essential", "Secure patient appointment history"]} href="/register" linkLabel="Join as a Doctor" showAction={!session?.user} reverse />
         </div>
       </section>
 
@@ -128,7 +128,7 @@ function Feature({ icon: Icon, number, title, text }) {
   );
 }
 
-function Story({ image, imageAlt, eyebrow, title, text, points, href, linkLabel, reverse = false }) {
+function Story({ image, imageAlt, eyebrow, title, text, points, href, linkLabel, showAction = true, reverse = false }) {
   return (
     <article className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
       <div className={reverse ? "lg:order-2" : ""}>
@@ -143,7 +143,9 @@ function Story({ image, imageAlt, eyebrow, title, text, points, href, linkLabel,
         <ul className="mt-6 space-y-3">
           {points.map((point) => <li key={point} className="flex items-center gap-3 text-sm font-medium"><ShieldCheck className="size-5 shrink-0 text-emerald-600" aria-hidden="true" />{point}</li>)}
         </ul>
-        <Link href={href} className="focus-ring mt-7 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90">{linkLabel}<ArrowRight className="size-4" aria-hidden="true" /></Link>
+        {showAction && (
+          <Link href={href} className="focus-ring mt-7 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90">{linkLabel}<ArrowRight className="size-4" aria-hidden="true" /></Link>
+        )}
       </div>
     </article>
   );
