@@ -296,8 +296,7 @@
 }
 
 .scroll-reveal {
-  animation: mediassist-fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-timeline: view(10% 0%);
+  will-change: opacity, transform;
 }
 
 .scroll-reveal-delay-1 {
@@ -305,13 +304,31 @@
 }
 
 .scroll-reveal-section {
-  animation: mediassist-fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-timeline: view(8% 0%);
+  will-change: opacity, transform;
 }
 
 .image-reveal {
+  will-change: opacity, transform;
+}
+
+.js-motion .scroll-reveal,
+.js-motion .scroll-reveal-section {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+.js-motion .image-reveal {
+  opacity: 0.35;
+  transform: scale(1.06);
+}
+
+.js-motion .scroll-reveal.is-visible,
+.js-motion .scroll-reveal-section.is-visible {
+  animation: mediassist-fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.js-motion .image-reveal.is-visible {
   animation: mediassist-image-reveal 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-timeline: view(8% 0%);
 }
 
 /*

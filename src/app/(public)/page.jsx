@@ -10,6 +10,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
+import HomeMotion from "@/components/public/home-motion";
 
 const images = {
   hero: "/images/ChatGPT Image Jul 19, 2026, 10_33_02 PM (1).png",
@@ -22,6 +23,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <HomeMotion />
       <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary/10 via-background to-blue-50/60 dark:to-background">
         <div className="page-container grid min-h-[620px] items-center gap-12 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:py-20">
           <div className="scroll-reveal relative z-10">
