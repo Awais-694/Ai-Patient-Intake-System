@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Stethoscope,
 } from "lucide-react";
+import { auth } from "@/lib/auth";
 
 const images = {
   hero: "/images/ChatGPT Image Jul 19, 2026, 10_33_02 PM (1).png",
@@ -16,7 +17,9 @@ const images = {
   patient: "/images/ChatGPT Image Jul 19, 2026, 10_33_04 PM (3).png",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+
   return (
     <>
       <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary/10 via-background to-blue-50/60 dark:to-background">
@@ -36,14 +39,13 @@ export default function HomePage() {
               and share a structured clinical intake summary before your visit.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                Get Started <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-              <Link href="/doctors" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-xl border bg-background px-6 text-sm font-semibold transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary">
-                <Stethoscope className="size-4" aria-hidden="true" /> Browse Doctors
-              </Link>
-            </div>
+            {!session?.user && (
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link href="/register" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                  Get Started <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              </div>
+            )}
 
             <div className="mt-8 grid max-w-xl gap-3 text-sm sm:grid-cols-3">
               {["Secure health records", "Approved doctors", "Human clinical review"].map((item) => (
