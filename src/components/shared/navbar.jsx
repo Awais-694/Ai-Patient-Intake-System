@@ -56,6 +56,9 @@ export default function Navbar() {
   const isAuthenticated = status === "authenticated";
 
   const dashboardPath = getDashboardPath(user?.role);
+  const visibleNavigation = isAuthenticated
+    ? publicNavigation.filter((item) => item.href === "/")
+    : publicNavigation;
 
   function isActiveLink(href) {
     if (href === "/") {
@@ -102,7 +105,7 @@ export default function Navbar() {
             className="hidden items-center gap-1 md:flex"
             aria-label="Primary navigation"
           >
-            {publicNavigation.map((item) => {
+            {visibleNavigation.map((item) => {
               const active = isActiveLink(item.href);
 
               return (
@@ -229,7 +232,7 @@ export default function Navbar() {
             aria-label="Mobile navigation"
           >
             <div className="flex flex-col gap-1">
-              {publicNavigation.map((item) => {
+              {visibleNavigation.map((item) => {
                 const active = isActiveLink(item.href);
 
                 return (
