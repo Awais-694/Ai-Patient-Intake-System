@@ -175,40 +175,46 @@ export default async function NewAppointmentPage({
         <BookingErrorAlert error={error} />
       )}
 
-      <section className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
-        <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Sparkles className="size-5" aria-hidden="true" />
-          </span>
-          <div>
-            <h2 className="font-semibold">Find the Right Doctor with AI</h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Describe your current symptoms and Groq AI will suggest a suitable specialty. Your existing AI-assisted appointment intake will continue to work separately after booking.
-            </p>
+      <section className="mt-6 overflow-hidden rounded-2xl border border-primary/20 bg-card shadow-sm">
+        <div className="border-b bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6">
+          <div className="flex items-start gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <Sparkles className="size-5" aria-hidden="true" />
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary">Step 1</span>
+                <h2 className="text-lg font-semibold">Find the right doctor with AI</h2>
+              </div>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                Tell us what you are experiencing. Groq AI will suggest suitable specialties and doctors. You can still choose a doctor manually below.
+              </p>
+            </div>
           </div>
         </div>
 
-        <form action={recommendDoctors} className="mt-5 grid gap-4 md:grid-cols-[1fr_220px]">
-          <div>
-            <label htmlFor="recommendationSymptoms" className="text-sm font-medium">Current symptoms</label>
-            <textarea id="recommendationSymptoms" name="symptoms" required minLength={10} maxLength={2000} rows={3} placeholder="Example: Mujhe teen din se headache aur chakkar aa rahe hain" className={`${textareaClasses} mt-2`} />
+        <form action={recommendDoctors} className="grid gap-5 p-5 sm:p-6 md:grid-cols-[1fr_220px]">
+          <div className="md:col-span-2">
+            <label htmlFor="recommendationSymptoms" className="text-sm font-semibold">What symptoms are you experiencing?</label>
+            <p className="mt-1 text-xs text-muted-foreground">You can write in English, Urdu, or Roman Urdu. Include when the symptoms started and how they feel.</p>
+            <textarea id="recommendationSymptoms" name="symptoms" required minLength={10} maxLength={2000} rows={4} placeholder="Example: Mujhe teen din se headache aur chakkar aa rahe hain" className={`${textareaClasses} mt-2`} />
           </div>
           <div>
-            <label htmlFor="recommendationDuration" className="text-sm font-medium">Symptom duration</label>
+            <label htmlFor="recommendationDuration" className="text-sm font-semibold">How long have you had them?</label>
             <input id="recommendationDuration" name="duration" maxLength={100} placeholder="Example: 3 days" className={`${inputClasses} mt-2`} />
           </div>
-          <label className="flex items-start gap-3 md:col-span-2">
-            <input type="checkbox" name="consentToAIAnalysis" value="true" required className="mt-1 size-4" />
-            <span className="text-sm leading-6 text-muted-foreground">You may describe symptoms in English, Urdu, or Roman Urdu. I consent to Groq AI processing these symptoms to recommend a relevant medical specialty. This is not a diagnosis or medical advice.</span>
+          <label className="flex items-start gap-3 rounded-xl border bg-muted/30 p-3 text-sm leading-6 text-muted-foreground md:col-span-2">
+            <input type="checkbox" name="consentToAIAnalysis" value="true" required className="mt-1 size-4 shrink-0 accent-primary" />
+            <span>I agree that Groq AI may process these symptoms to suggest a medical specialty. This recommendation is not a diagnosis or medical advice.</span>
           </label>
-          <button className="focus-ring inline-flex h-11 w-fit items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground md:col-span-2">
-            <Sparkles className="size-4" /> Recommend Doctors
+          <button className="focus-ring inline-flex h-11 w-fit items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md md:col-span-2">
+            <Sparkles className="size-4" /> Find Recommended Doctors
           </button>
         </form>
 
         {bookingData.recommendation && (
-          <div className="mt-5 rounded-xl border bg-background p-4">
-            <p className="text-sm font-semibold">AI recommendation</p>
+          <div className="mx-5 mb-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 sm:mx-6">
+            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">AI recommendation ready</p>
             <p className="mt-2 text-sm leading-6">{bookingData.recommendation.summary}</p>
             <p className="mt-2 text-sm text-primary">Suggested specialty: <strong>{bookingData.recommendation.specializations.join(", ") || bookingData.recommendation.suggestedDepartment}</strong></p>
             {bookingData.doctors.filter((doctor) => doctor.recommended).length > 0 && (
