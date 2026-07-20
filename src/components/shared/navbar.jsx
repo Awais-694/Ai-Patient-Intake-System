@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
   CalendarPlus,
@@ -17,21 +16,6 @@ import {
 
 import { APP_NAME, USER_ROLES } from "@/lib/constants";
 
-const publicNavigation = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Doctors",
-    href: "/doctors",
-  },
-  {
-    label: "About",
-    href: "/about",
-  },
-];
-
 function getDashboardPath(role) {
   if (role === USER_ROLES.ADMIN) {
     return "/admin/dashboard";
@@ -45,7 +29,6 @@ function getDashboardPath(role) {
 }
 
 export default function Navbar() {
-  const pathname = usePathname();
   const { data: session, status } = useSession();
 
   const [mobileMenuOpen, setMobileMenuOpen] =
@@ -56,18 +39,6 @@ export default function Navbar() {
   const isAuthenticated = status === "authenticated";
 
   const dashboardPath = getDashboardPath(user?.role);
-  const visibleNavigation = isAuthenticated
-    ? []
-    : publicNavigation;
-
-  function isActiveLink(href) {
-    if (href === "/") {
-      return pathname === "/";
-    }
-
-    return pathname.startsWith(href);
-  }
-
   function closeMobileMenu() {
     setMobileMenuOpen(false);
   }
@@ -100,29 +71,6 @@ export default function Navbar() {
               {APP_NAME}
             </span>
           </Link>
-
-          <nav
-            className="hidden items-center gap-1 md:flex"
-            aria-label="Primary navigation"
-          >
-            {visibleNavigation.map((item) => {
-              const active = isActiveLink(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`focus-ring rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    active
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
 
           <div className="hidden items-center gap-2 md:flex">
             {isLoading && (
@@ -231,28 +179,7 @@ export default function Navbar() {
             className="border-t py-4 md:hidden"
             aria-label="Mobile navigation"
           >
-            <div className="flex flex-col gap-1">
-              {visibleNavigation.map((item) => {
-                const active = isActiveLink(item.href);
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={closeMobileMenu}
-                    className={`focus-ring rounded-lg px-3 py-2 text-sm font-medium transition ${
-                      active
-                        ? "bg-muted text-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="mt-4 border-t pt-4">
+            <div>
               {isLoading && (
                 <div className="h-10 w-full animate-pulse rounded-lg bg-muted" />
               )}
