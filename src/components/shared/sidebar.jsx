@@ -54,6 +54,11 @@ const navigationByRole = {
 
   [USER_ROLES.DOCTOR]: [
     {
+      label: "Home",
+      href: "/",
+      icon: House,
+    },
+    {
       label: "Dashboard",
       href: "/doctor/dashboard",
       icon: LayoutDashboard,
