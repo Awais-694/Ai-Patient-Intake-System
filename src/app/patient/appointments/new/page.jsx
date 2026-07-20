@@ -217,12 +217,15 @@ export default async function NewAppointmentPage({
             <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">AI recommendation ready</p>
             <p className="mt-2 text-sm leading-6">{bookingData.recommendation.summary}</p>
             <p className="mt-2 text-sm text-primary">Suggested specialty: <strong>{bookingData.recommendation.specializations.join(", ") || bookingData.recommendation.suggestedDepartment}</strong></p>
-            {bookingData.doctors.filter((doctor) => doctor.recommended).length > 0 && (
+            {(() => {
+              const exactMatches = bookingData.doctors.filter((doctor) => doctor.recommended);
+              const doctorsToShow = exactMatches.length > 0 ? exactMatches : bookingData.doctors.slice(0, 3);
+              return doctorsToShow.length > 0 ? (
               <div className="mt-4 rounded-lg border bg-muted/30 p-3">
-                <p className="text-sm font-semibold">Recommended doctors</p>
+                <p className="text-sm font-semibold">{exactMatches.length > 0 ? "Recommended doctors" : "Available doctors to review"}</p>
+                {exactMatches.length === 0 && <p className="mt-1 text-xs text-muted-foreground">No doctor with the exact suggested specialty is currently available. These approved doctors are available for you to review.</p>}
                 <div className="mt-2 space-y-2">
-                  {bookingData.doctors
-                    .filter((doctor) => doctor.recommended)
+                  {doctorsToShow
                     .slice(0, 3)
                     .map((doctor) => (
                       <div key={doctor.profileId} className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -232,7 +235,8 @@ export default async function NewAppointmentPage({
                     ))}
                 </div>
               </div>
-            )}
+              ) : null;
+            })()}
             {bookingData.recommendation.requiresUrgentReview && <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm font-semibold text-destructive">Urgent medical review is recommended. Seek immediate care if symptoms are severe or worsening.</p>}
           </div>
         )}
